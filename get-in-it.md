@@ -47,3 +47,7 @@ java -classpath bin tspdemo.TspDemo <msg_standorte_deutschland.csv
  ->   65.28km -> Ismaning/München (Hauptsitz)
 Total: 2333.41km
 ```
+
+Durch wenige kleine Änderungen im Quellcode lässt sich stattdessen auch eine GPX-Datei erzeugen, die zu folgender Visualisierung führt:
+
+![gpx](get-in-it-gpx.png)
