@@ -11,16 +11,10 @@ import tspdemo.HeldKarpSolver;
 
 class AsymmetricTspTest {
 
-    @Test
-    void testWikipediaExample() {
-        // Example from the Wikipedia article about the Held-Karp algorithm:
-
-        final int distanceMatrix[][] = {
-                {  0,  2,  9, 10 },
-                {  1,  0,  6,  4 },
-                { 15,  7,  0,  8 },
-                {  6,  3, 12,  0 }
-        };
+    private static void test(int distanceMatrix[][],
+                             int correctTotalDistance,
+                             int[] correctOrder) {
+        int nNodes = distanceMatrix.length;
 
         class Node implements HeldKarpSolver.Locatable<Node> {
             Node(int index) {
@@ -37,26 +31,57 @@ class AsymmetricTspTest {
 
         // Create four nodes representing the distance matrix above.
         List<Node> nodes = new ArrayList<>();
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < nNodes; i++)
             nodes.add(new Node(i));
 
         // Solve the problem.
         HeldKarpSolver.Result<Node> path = HeldKarpSolver.solve(nodes, 0);
-        assertEquals(4, path.asList().size());
-        assertEquals(21d, path.totalDistance(), 1e-9);
+        assertEquals(nNodes, path.asList().size());
+        assertEquals(correctTotalDistance, path.totalDistance(), 1e-9);
 
         // Make sure that the total distance is correct.
         double distance = 0;
         Node lastNode = nodes.get(0);
-        for (Node node : path)
+        for (Node node : path) {
             distance += lastNode.distanceTo(node);
-        assertEquals(21d, distance, 1e-9);
+            lastNode = node;
+        }
+        assertEquals(correctTotalDistance, distance, 1e-9);
 
         // Make sure the nodes are in the correct oder.
-        assertSame(nodes.get(1), path.asList().get(0));
-        assertSame(nodes.get(3), path.asList().get(1));
-        assertSame(nodes.get(2), path.asList().get(2));
-        assertSame(nodes.get(0), path.asList().get(3));
+        for (int i = 0; i < nNodes; i++)
+            assertSame(nodes.get(correctOrder[i]), path.asList().get(i));
+    }
+
+    @Test
+    void test() {
+        // Trivial examples:
+        test(new int[][] {
+                { 0, 1, 100 },
+                { 100, 0, 1 },
+                { 1, 100, 0 }
+        }, 3, new int[] { 1, 2, 0 });
+
+        test(new int[][] {
+                { 0, 100, 1 },
+                { 1, 0, 100 },
+                { 100, 1, 0 }
+        }, 3, new int[] { 2, 1, 0 });
+
+        test(new int[][] {
+                { 0, 100, 100, 1 },
+                { 1, 0, 50, 100 },
+                { 1, 100, 0, 100 },
+                { 100, 1, 100, 0 }
+        }, 53, new int[] { 3, 1, 2, 0 });
+
+        // Example from the Wikipedia article about the Held-Karp algorithm:
+        test(new int[][] {
+                {  0,  2,  9, 10 },
+                {  1,  0,  6,  4 },
+                { 15,  7,  0,  8 },
+                {  6,  3, 12,  0 }
+        }, 21, new int[] { 2, 3, 1, 0 });
     }
 
 }
