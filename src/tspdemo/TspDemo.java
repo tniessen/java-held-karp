@@ -42,8 +42,11 @@ public class TspDemo {
     private static Location parseLine(String line) {
         // If the input format is incorrect, this will result in an uncaught
         // exception, so avoid feeding garbage into the program.
-        Pattern p = Pattern.compile("^([0-9]+),([^,]+),.*,([0-9\\\\.]+),([0-9\\.]+)$");
+        Pattern p = Pattern.compile("^([0-9]+),([^,]+),.*,([0-9\\.]+),([0-9\\.]+)$");
         Matcher m = p.matcher(line);
+        if (!m.matches()) {
+            throw new RuntimeException("Invalid input format.");
+        }
         return new Location(m.group(2), Double.parseDouble(m.group(3)), Double.parseDouble(m.group(4)));
     }
 
@@ -75,6 +78,9 @@ public class TspDemo {
                                   nextLocation.niceName));
             lastLocation = nextLocation;
         }
+
+        System.out.println(String.format("Total: %.2fkm",
+                                         result.totalDistance()));
     }
 
 }
