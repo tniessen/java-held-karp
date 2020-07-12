@@ -14,7 +14,14 @@ import java.util.List;
  */
 public class HeldKarpSolver {
 
-    /** Something that can be located (relative to another "something"). */
+    /**
+     * Something that can be located (relative to another "something").
+     *
+     * This interface only requires distances between objects, but no locations.
+     * Therefore, it can be used in any arbitrarily shaped single-dimensional
+     * or multi-dimensional space, e.g., on a two-dimensional plane or a
+     * three-dimensional sphere.
+     */
     public interface Locatable<T extends Locatable<T>> {
         /**
          * Computes the distance to another object of the same type.
@@ -155,6 +162,7 @@ public class HeldKarpSolver {
         List<T> result = new LinkedList<>();
         for (int i = 0; i < nodes.size(); i++) {
             result.add(0, nodes.get(nodeIndex));
+            // Move backwards through the predecessor and cost matrices.
             int prevSetIndex = setIndex;
             setIndex = setIndex & ~(1 << nodeIndex);
             nodeIndex = predecessor[prevSetIndex][nodeIndex];
